@@ -15,6 +15,11 @@ To a topic event
 import stomp
 import sys
 
+class EventType:
+  NEW_WAFERMAP_IN_WMDB='NEW_WAFERMAP_IN_WMDB'
+  UPDATED_WAFERMAP_IN_WMDB='UPDATED_WAFERMAP_IN_WMDB'
+  DELETED_WAFERMAP_IN_WMDB='DELETED_WAFERMAP_IN_WMDB'
+
 class Wmdb:
 
   def __init__(self, hostname, port):
@@ -49,7 +54,7 @@ def event_to_xml(event):
      
      Given an event
      >>> timestamp = datetime(2012, 12, 7, 8, 56)
-     >>> e = Event('NEW_WAFERMAP_IN_WMDB', 'sda.sensors.elex.be', timestamp, 
+     >>> e = Event(EventType.NEW_WAFERMAP_IN_WMDB, 'sda.sensors.elex.be', timestamp, 
      ...   Wmdb('sda.sensors.elex.be', 6913), '/mnt/categorymaps/WC_A12345_1.th01')
 
      When the event is sent to event_to_xml then we get the event in xml format.
