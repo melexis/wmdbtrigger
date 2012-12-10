@@ -12,6 +12,7 @@ It sends events with the following format:
 
 To a topic event
 """
+import config
 import stomp
 import sys
 
@@ -77,17 +78,16 @@ def event_to_xml(event):
                     'port': event.wmdb.port,
                     'path': event.path}
 
-def trigger(event, hosts=[('ewaf.colo.elex.be', 6913)]):
+def trigger(event):
   """Send a trigger to the queueserver
 
      Parameters
        event    - the event to send to the stomp server
-       hosts    - an optional parameter with a list of the hosts and ports to the stomp server(s)
 
      Example:  trigger(e)
 
      Returns None"""
-  c = stomp.Connection(hosts)
+  c = stomp.Connection(config.HOSTS)
   c.start()
   c.connect()
   c.send(event_to_xml(event), destination='/topic/event')
