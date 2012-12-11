@@ -32,19 +32,21 @@ class Wmdb:
 
 class Event:
 
-  def __init__(self, eventtype, sender, date, wmdb, path):
+  def __init__(self, eventtype, sender, date, wmdb, wafermaptype, path):
     self.eventtype = eventtype
     self.sender = sender
     self.date = date
     self.wmdb = wmdb 
+    self.wafermaptype = wafermaptype
     self.path = path
 
   def __repr__(self):
-    return "Event {type: %(type)s from: %(from)s date: %(date)s wmdb: %(wmdb)s %(path)s}" % {
+    return "Event {type: %(type)s from: %(from)s date: %(date)s wmdb: %(wmdb)s wafermaptype: %(wafermaptype)s %(path)s}" % {
         'type': self.eventtype,
         'from': self.sender,
         'date': self.date,
         'wmdb': self.wmdb,
+        'wafermaptype': self.wafermaptype,
         'path': self.path}
 
 def event_to_xml(event):
@@ -56,7 +58,7 @@ def event_to_xml(event):
      Given an event
      >>> timestamp = datetime(2012, 12, 7, 8, 56)
      >>> e = Event(EventType.NEW_WAFERMAP_IN_WMDB, 'sda.sensors.elex.be', timestamp, 
-     ...   Wmdb('sda.sensors.elex.be', 6913), '/mnt/categorymaps/WC_A12345_1.th01')
+     ...   Wmdb('sda.sensors.elex.be', 6913), 'catmap', '/mnt/categorymaps/WC_A12345_1.th01')
 
      When the event is sent to event_to_xml then we get the event in xml format.
      >>> xml = event_to_xml(e)
@@ -64,16 +66,18 @@ def event_to_xml(event):
      Clean the xml so we have a chance to compare it.
      >>> lines = map(lambda s: s.strip(), xml.split("\\n"))
      >>> '\\n'.join(lines)
-     '<?xml version="1.0"?>\\n<event type="NEW_WAFERMAP_IN_WMDB" from="sda.sensors.elex.be" date="2012-12-07T08:56:00">\\n<attribute key="hostname" value="sda.sensors.elex.be" />\\n<attribute key="port" value="6913" />\\n<attribute key="path" value="/mnt/categorymaps/WC_A12345_1.th01" />\\n</event>'
+     '<?xml version="1.0"?>\\n<event type="NEW_WAFERMAP_IN_WMDB" from="sda.sensors.elex.be" date="2012-12-07T08:56:00">\\n<attribute key="hostname" value="sda.sensors.elex.be" />\\n<attribute key="port" value="6913" />\\n<attribute key="path" value="/mnt/categorymaps/WC_A12345_1.th01" />\\n<attribute key="wafermaptype" value="catmap" />\\n</event>'
   """
   return """<?xml version="1.0"?>
      <event type="%(type)s" from="%(from)s" date="%(timestamp)s">
        <attribute key="hostname" value="%(hostname)s" />
        <attribute key="port" value="%(port)s" />
        <attribute key="path" value="%(path)s" />
+       <attribute key="wafermaptype" value="%(wafermaptype)s" />
      </event>""" % {'type': event.eventtype,
                     'timestamp': event.date.isoformat(),
                     'from': event.sender,
+                    'wafermaptype': event.wafermaptype,
                     'hostname': event.wmdb.hostname,
                     'port': event.wmdb.port,
                     'path': event.path}
