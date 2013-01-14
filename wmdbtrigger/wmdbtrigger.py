@@ -95,6 +95,7 @@ def trigger(event):
   c.start()
   c.connect()
   c.send(event_to_xml(event), destination='/topic/event')
+  c.stop()
 
 def test():
   import doctest
