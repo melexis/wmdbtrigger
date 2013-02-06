@@ -94,7 +94,7 @@ def trigger(event):
   c = stomp.Connection(config.HOSTS)
   c.start()
   c.connect()
-  c.send(event_to_xml(event), destination='/topic/event')
+  c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
   c.stop()
 
 def test():
