@@ -12,7 +12,6 @@ It sends events with the following format:
 
 To a topic event
 """
-import config
 import stomp
 import sys
 
@@ -82,18 +81,20 @@ def event_to_xml(event):
                     'port': event.wmdb.port,
                     'path': event.path}
 
-def trigger(event):
-  """Send a trigger to the queueserver
+def trigger(event, hostnames):
+  """Send trigger to the queueservers on the hostnames
 
      Parameters
-       event    - the event to send to the stomp server
+       event     - the event to send to the stomp server
+       hostnames - list of tuples with hostname and port of the queueserver
 
-     Example:  trigger(e)
+     Example:  trigger(event, [("ewaf-test.colo.elex.be", 61613), ("esb-a-test.sensors.elex.be", 61501), ("esb-b-test.sensors.elex.be", 61501)])
 
      Returns None"""
-  c = stomp.Connection(config.HOSTS)
+
+  c = stomp.Connection(hostnames)
   c.start()
-  c.connect()
+  c.connect()  
   c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
   c.stop()
 
