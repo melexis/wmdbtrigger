@@ -94,12 +94,17 @@ def trigger(event, hostnames):
 
      Returns None"""
 
-  for hostname in hostnames:
-      c = stomp.Connection(hostname)
-      c.start()
-      c.connect()  
-      c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
-      c.stop()
+  def _send_trigger(event, hosts):
+      c = stomp.Connection(hosts)
+      try:
+        c.start()
+        c.connect()
+        c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
+      finally:
+        c.stop()
+
+  for hosts in hostnames:
+    _send_trigger(event, hosts)
 
 def test():
   import doctest
