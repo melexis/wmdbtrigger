@@ -86,17 +86,20 @@ def trigger(event, hostnames):
 
      Parameters
        event     - the event to send to the stomp server
-       hostnames - list of tuples with hostname and port of the queueserver
+       hostnames - list of lists of tuples with hostname and port of the queueserver. Hostnames, with failover, are grouped in the inner list.
 
-     Example:  trigger(event, [("ewaf-test.colo.elex.be", 61613), ("esb-a-test.sensors.elex.be", 61501), ("esb-b-test.sensors.elex.be", 61501)])
+     Example:  trigger(event, [[("ewaf-test.colo.elex.be", 61613)], [("esb-a-test.sensors.elex.be", 61501), ("esb-b-test.sensors.elex.be", 61501)]])
+
+     This will send the trigger to "ewaf-test.colo.elex.be" and also to either "esb-a-test.sensors.elex.be" or "esb-b-test.sensors.elex.be" depending on which one is listening to the defined portnumber.
 
      Returns None"""
 
-  c = stomp.Connection(hostnames)
-  c.start()
-  c.connect()  
-  c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
-  c.stop()
+  for hostname in hostnames:
+      c = stomp.Connection(hostname)
+      c.start()
+      c.connect()  
+      c.send(event_to_xml(event), destination='/topic/VirtualTopic.event')
+      c.stop()
 
 def test():
   import doctest
